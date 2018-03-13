@@ -3,27 +3,21 @@
 #include <fstream>
 #include <cstring>
 
-#define F_NAME "ArmA"
-
-int main(int argc, char **argv)
-{
-    if (argc < 2)
-    {
-        std::cerr << "Usage: gen [file]" << std::endl;
+int main(int argc, char **argv) {
+    if (argc < 3) {
+        std::cerr << "Usage: autocomple_gen [source_file] [new_file_name]" << std::endl;
         return EXIT_FAILURE;
     }
 
     std::fstream file_read(argv[1]);
-    if (!file_read.is_open())
-    {
+    if (!file_read.is_open()) {
         std::cerr << "Error: File " << argv[1] << " does not exist" << std::endl;
         return EXIT_FAILURE;
     }
 
     std::string line, tag;
     std::vector<std::string> content;
-    while (getline(file_read, line, '\n'))
-    {
+    while (getline(file_read, line, '\n')) {
         if ((line.find("tag") != std::string::npos) && (line.find("=")) != std::string::npos) {
             tag = line.substr(line.find("\""), line.rfind("\"") - line.find("\""));
         } else if ((line.find("class") != std::string::npos) && (line.find("{") != std::string::npos)) {
@@ -38,7 +32,8 @@ int main(int argc, char **argv)
     file_read.close();
     content.push_back("]}");
 
-    std::ofstream file_write("./output/" F_NAME ".sublime-completions");
+    const std::string n_file(argv[2]);
+    std::ofstream file_write("./outputs/" + n_file + ".sublime-completions");
     for (std::string n : content) {
         file_write << n;
     }
